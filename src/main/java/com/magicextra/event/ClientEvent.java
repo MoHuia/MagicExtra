@@ -1,6 +1,7 @@
 package com.magicextra.event;
 
 
+import com.magicextra.Config;
 import com.magicextra.MagicExtra;
 import com.magicextra.item.wrench;
 import com.magicextra.net.DefusePack;
@@ -61,7 +62,7 @@ public class ClientEvent {//以上是监听注解，，这是静态注册事件�
         } else if (wasKeyPressed != KeyBindings.DEFUSE_KEY.isDown()) {
             wasKeyPressed = false;
             Minecraft.getInstance().player.sendSystemMessage(
-                    Component.literal("玩家不按了")
+                    Component.literal("玩家不按了"+ Config.VALUE.get())
             );
         }
 

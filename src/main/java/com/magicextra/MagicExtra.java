@@ -5,10 +5,10 @@ import com.magicextra.net.ModMessage;
 import com.mojang.logging.LogUtils;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -28,12 +28,12 @@ public class MagicExtra {
         ITEMS.register(bus);
         ModMessage.register();
         InitAll(bus);//注册物品
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::config);//注册配置
+        config();//注册配置
     }
     public void InitAll(IEventBus iEventBus){//正常注册进世界总线
         wrench.init(iEventBus);
     }
-    private void config(final FMLCommonSetupEvent event) {
-        ConfigManager.init(FMLPaths.CONFIGDIR.get());
+    private void config() {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
     }
 }
