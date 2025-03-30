@@ -1,9 +1,11 @@
 package com.magicextra.mixin;
 
 
+import com.magicextra.Config;
 import com.magicextra.item.wrench;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -13,7 +15,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -77,18 +81,21 @@ public class AbstractContainerMenuMixin {
         if(this.menuType == BuiltInRegistries.MENU.get(new ResourceLocation("inventory"))){
             temp=1;
         }
-        // 3. 检查是否涉及扳手//或者指定槽位
-        boolean isWrenchOperation =
-                sourceItem.getItem() == wrench.WRENCH.get() ||
-                        carriedItem.getItem() == wrench.WRENCH.get()||
-                        slotId == this.slots.size()-9-temp;
+        // 3. 检查是否涉及特定物品//在指定槽位
+        ResourceLocation ITEM = new ResourceLocation(Config.ITEM.get());
+        Item item = ForgeRegistries.ITEMS.getValue(ITEM);
+        int Slot = Config.SLOT.get();
+        boolean isItemOperation =
+                (sourceItem.getItem() == item ||
+                        carriedItem.getItem() == item)&&
+                        slotId == this.slots.size()-9-temp+Slot;
 
 
-        if (isWrenchOperation) {
+        if (isItemOperation) {
             // 4. 客户端提示
             if (player.level().isClientSide) {
                 Minecraft.getInstance().player.sendSystemMessage(
-                        Component.literal("你没有权限控制这个物品栏+Slotod:"+slotId)
+                        Component.literal("你没有权限控制这个物品栏+Slotod:"+slotId+item)
                 );
             }
             // 5. 取消所有涉及扳手的操作
