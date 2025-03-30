@@ -5,7 +5,6 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "magicextra.refmap.json",
   "mixins": [
-
     "AbstractContainerMenuMixin",
     "ServerGamePacketListenerImplMixin"
   ],
