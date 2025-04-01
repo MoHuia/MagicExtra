@@ -1,6 +1,6 @@
 package com.magicextra.net;
 
-import com.magicextra.item.wrench;
+import com.magicextra.item.ModItemRegister;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
@@ -33,7 +33,7 @@ public class KeyPack {
             // 在主线程执行（重要！）
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
-            if(player.getInventory().selected == 36 || player.getInventory().getSelected().getItem()== wrench.WRENCH.get()){
+            if(player.getInventory().selected == 36 || player.getInventory().getSelected().getItem()== ModItemRegister.WRENCH.get()){
                 
             }
             // 这里添加业务逻辑...

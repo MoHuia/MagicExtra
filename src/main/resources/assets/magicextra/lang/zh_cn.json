@@ -2,5 +2,7 @@
   "item.magicextra.magicshop": "魔法商店",
   "item.magicextra.wrench": "扳手",
   "key.defuse": "拆除炸弹",
-  "key.eyiqian": "魔法扩展包"
+  "key.eyiqian": "魔法扩展包",
+  "itemGroup.magicextra": "魔法扩展"
+
 }

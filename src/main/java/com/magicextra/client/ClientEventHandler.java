@@ -3,6 +3,7 @@ package com.magicextra.client;
 
 import com.magicextra.MagicExtra;
 import com.magicextra.event.MagicShopScreen;
+import com.magicextra.item.ModItemRegister;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -32,7 +33,7 @@ public class ClientEventHandler {
 
         // 1. 检查是否主手持有目标物品
         ItemStack mainHandStack = player.getItemInHand(InteractionHand.MAIN_HAND);
-        if (mainHandStack.getItem() != MagicExtra.magic_shop.get()) {
+        if (mainHandStack.getItem() != ModItemRegister.MAGIC_SHOP.get()) {
             return; // 非目标物品直接返回
         }
 
