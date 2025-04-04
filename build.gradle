@@ -44,8 +44,10 @@ minecraft {
     //
     // Use non-default mappings at your own risk. They may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
+    //官方代码名是乱码----------------
     mappings channel: mapping_channel, version: mapping_version
-
+    //-----------------------------------------------------------------
+    //mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
     // When true, this property will have all Eclipse/IntelliJ IDEA run configurations run the "prepareX" task for the given run configuration before launching the game.
     // In most cases, it is not necessary to enable.
     // enableEclipsePrepareRuns = true
