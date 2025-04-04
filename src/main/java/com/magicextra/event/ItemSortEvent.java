@@ -151,11 +151,12 @@ public class ItemSortEvent {
                         inventory.setItem(i, ItemStack.EMPTY);
                     }
                     else {
+                        inventory.setItem(i, ItemStack.EMPTY);
                         // 没有找到合适的堆叠，尝试移动到空槽位
                         if (moveItemToEmptySlot(inventory, targetSlotStack.copy())) {
                             inventory.setItem(targetSlot, stack.copy());
-                            inventory.setItem(i, ItemStack.EMPTY);
                         }
+
                     }
                 }
             }
