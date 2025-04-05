@@ -18,6 +18,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import static com.magicextra.Config.*;
+
 @Mod.EventBusSubscriber(modid = MagicExtra.MODID,bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ItemSortEvent {
         @SubscribeEvent
@@ -25,30 +27,19 @@ public class ItemSortEvent {
 //              //debug
 //            Minecraft.getInstance().player.sendSystemMessage(
 //                    Component.literal("捡起物品"+ event.getItem()));
-
-//             1. 获取配置中的物品和槽位
-        ResourceLocation targetItemId = new ResourceLocation(Config.ITEM.get());
-        Item targetItem = ForgeRegistries.ITEMS.getValue(targetItemId);
-        int targetSlot = Config.SLOT.get();
-
-        Player player = event.getEntity();
-        ItemStack pickedStack = event.getItem().getItem();
-
-        // 2. 检查拾取的物品是否匹配配置
-        if (pickedStack.getItem() != targetItem) {
-            return; // 不处理非目标物品
-        }
-
-        // 3. 验证槽位有效性（0~35）
-        if (targetSlot < 0 || targetSlot >= 36) {
-            player.displayClientMessage(
-                    Component.literal("配置错误：槽位编号必须在0~35之间！"), true
-            );
-            return;
-        }
-        event.setCanceled(true);
-        Inventory inventory = player.getInventory();
-        ItemStack targetSlotStack = inventory.getItem(targetSlot);
+            Player player = event.getEntity();
+            ItemStack pickedStack = event.getItem().getItem();
+//          //读取配置文件的特定物品和槽位
+            //-----------------------------------------
+            Item targetItem = pickedStack.getItem();
+            int index = getIndexFromItem(targetItem);
+            if(index<0) return;
+            int targetSlot = getTargetSlot(index);
+            if(targetSlot<0) return;
+            //-----------------------------------------
+            event.setCanceled(true);
+            Inventory inventory = player.getInventory();
+            ItemStack targetSlotStack = inventory.getItem(targetSlot);
         // 4. 处理目标槽位的不同情况
         if(targetSlotStack.isEmpty()){
             targetSlotStack.grow(1);
@@ -101,23 +92,21 @@ public class ItemSortEvent {
     }
 
     private static void organizeSpecificItem(Player player) {
-        // 1. 获取配置的目标物品和槽位
-        ResourceLocation targetItemId = new ResourceLocation(Config.ITEM.get());
-        Item targetItem = ForgeRegistries.ITEMS.getValue(targetItemId);
-        int targetSlot = Config.SLOT.get();
 
-        // 2. 检查槽位有效性
-        if (targetSlot < 0 || targetSlot >= 36) {
-            player.sendSystemMessage(Component.literal("配置错误：槽位编号必须在0~35之间！"));
-            return;
-        }
-
-        // 3. 遍历背包，查找目标物品
+        // 遍历背包，查找目标物品
         Inventory inventory = player.getInventory();
         for (int i = 0; i < 36; i++) {
             ItemStack stack = inventory.getItem(i);
-            if (stack.getItem() == targetItem && i != targetSlot) { // 跳过目标槽位本身
-                // 4. 如果目标槽位已有物品，尝试交换
+            //读取配置文件的特定物品和槽位
+            //----------------------------------------
+            int index =  getIndexFromItem(stack.getItem());
+            if(index<0) continue;
+            int targetSlot = getTargetSlot(index);
+            if(targetSlot<0) continue;
+            //-----------------------------------------
+
+            if (i != targetSlot) { // 跳过目标槽位本身
+                // 如果目标槽位已有物品，尝试交换
                 ItemStack targetSlotStack = inventory.getItem(targetSlot);
 
                 if (targetSlotStack.isEmpty()) {
@@ -134,14 +123,14 @@ public class ItemSortEvent {
                         stack.shrink(transfer);
                         if (stack.isEmpty()) {
                             inventory.setItem(i, ItemStack.EMPTY);
+                             }
                         }
-                    }else {
-                        //目标槽位满，将物品丢弃
+                        //合并完将剩下的物品丢弃
                         ItemStack stackToDrop = stack.copy(); // 复制要丢弃的物品
                         inventory.setItem(i, ItemStack.EMPTY); // 先清空槽位
                         player.drop(stackToDrop, true); // 再丢弃
                     }
-                } else {
+                 else {
                     // 目标槽位有不同物品，优先尝试合并到背包中已有的相同物品堆叠
                     boolean moved = tryMergeWithExistingStacks(inventory, targetSlotStack.copy(), targetSlot);
 

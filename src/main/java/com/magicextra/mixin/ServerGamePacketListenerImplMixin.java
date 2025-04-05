@@ -15,6 +15,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static com.magicextra.Config.*;
+
 @Mixin(ServerGamePacketListenerImpl.class)
 public abstract class ServerGamePacketListenerImplMixin {
     @Shadow
@@ -28,14 +30,19 @@ public abstract class ServerGamePacketListenerImplMixin {
         ServerboundPlayerActionPacket.Action serverboundplayeractionpacket$action = pPacket.getAction();
 
         Item item=player.getInventory().getSelected().getItem();
-        int Slot = Config.SLOT.get();
+
 
         switch (serverboundplayeractionpacket$action) {
             case SWAP_ITEM_WITH_OFFHAND:
-                ResourceLocation ITEM = new ResourceLocation(Config.ITEM.get());
-                Item Eitem = ForgeRegistries.ITEMS.getValue(ITEM);
-
-                if(item == Eitem && player.getInventory().selected == Slot) {
+                //读取配置文件的特定物品和槽位
+                //-----------------------------------------
+                int Slot =  player.getInventory().selected;
+                int index =  getIndexFromSlot(Slot);
+                if(index<0) return;
+                Item Eitem= getTargetItem(index);
+                if(Eitem == null)  return;
+                //-----------------------------------------
+                if(item == Eitem ) {
                     Minecraft.getInstance().player.sendSystemMessage(
                             Component.literal("发包了"+player.getInventory().selected)
                     );

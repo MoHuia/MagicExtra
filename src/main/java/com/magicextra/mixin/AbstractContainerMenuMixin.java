@@ -7,6 +7,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
@@ -22,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
+
+import static com.magicextra.Config.*;
 
 @Mixin(AbstractContainerMenu.class)
 public class AbstractContainerMenuMixin {
@@ -76,15 +79,18 @@ public class AbstractContainerMenuMixin {
         if(this.menuType == BuiltInRegistries.MENU.get(new ResourceLocation("inventory"))){
             temp=1;
         }
-        // 3. 检查是否涉及特定物品//在指定槽位
-        ResourceLocation ITEM = new ResourceLocation(Config.ITEM.get());
-        Item item = ForgeRegistries.ITEMS.getValue(ITEM);
-        int Slot = Config.SLOT.get();
+        //读取配置文件的特定物品和槽位
+        //-----------------------------------------
+        int Slot = slotId - this.slots.size()+9+temp;
+        int index =  getIndexFromSlot(Slot);
+        if(index<0) return;
+        Item item= getTargetItem(index);//获取物品
+        if(item == null )  return;
+        //---------------------------------------------
+        //判断本物品是否具有上面的物品标签
         boolean isItemOperation =
                 (sourceItem.getItem() == item ||
-                        carriedItem.getItem() == item)&&
-                        slotId == this.slots.size()-9-temp+Slot;
-
+                        carriedItem.getItem() == item);
 
         if (isItemOperation) {
             // 4. 客户端提示

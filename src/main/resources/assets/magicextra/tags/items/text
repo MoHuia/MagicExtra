@@ -1,0 +1,6 @@
+//    "#forge:gems/diamond",  // 引用其他标签
+//    {
+//      "id": "#minecraft:logs", // 指定标签条件
+//      "required": false        // 可选：是否必须存在
+//    }
+弃用
